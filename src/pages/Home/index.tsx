@@ -1,6 +1,8 @@
 import { Play } from 'phosphor-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as zod from "zod";
+
 import { HomeContainer, 
          FormContainer,  
          CountDownContainer, 
@@ -9,16 +11,35 @@ import { HomeContainer,
          TaskInput,
          MinutesAmountInput
         } from './styles';
+import { number } from 'zod';
+
+const newCycleFormValidationSchema = zod.object({
+    task: zod.string().min(1, "Informe a Tarefa"),
+    minutesAmount: number()
+                   .min(5, "O ciclo precisa ser no minímo de 5 minutos")
+                   .max(60, "O ciclo precisa ser no máximo 60min")
+})
+
+// Cria uma interface a partir da validacao do zod
+type NewCycleFormDataProps = zod.infer<typeof newCycleFormValidationSchema>
 
 export function Home(){
     // register adiciona um input ao formlulário
-    const { register, handleSubmit, watch } = useForm();
+    const { register, handleSubmit, watch, reset } = useForm<NewCycleFormDataProps>({
+        resolver: zodResolver(newCycleFormValidationSchema),
+        defaultValues: {
+            task: "",
+            minutesAmount: 0
+        }
+    });
 
-    function handleCreateNewCycle(data:any){
+    function handleCreateNewCycle(data:NewCycleFormDataProps){
         console.log(data)
+        reset();
     }
 
-    const task = watch("task");
+    // Controlled Component
+    const task = watch("task"); 
     const isSubmitDisabled = !task
 
 
