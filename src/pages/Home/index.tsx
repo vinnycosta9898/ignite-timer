@@ -1,4 +1,4 @@
-import { Play } from 'phosphor-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from "zod";
@@ -11,6 +11,8 @@ import { HomeContainer,
          TaskInput,
          MinutesAmountInput
         } from './styles';
+import { Play } from 'phosphor-react';
+
 import { number } from 'zod';
 
 const newCycleFormValidationSchema = zod.object({
@@ -23,7 +25,16 @@ const newCycleFormValidationSchema = zod.object({
 // Cria uma interface a partir da validacao do zod
 type NewCycleFormDataProps = zod.infer<typeof newCycleFormValidationSchema>
 
+interface Cycle{
+    id: string;
+    task: string;
+    minutesAmount: number;
+}
+
 export function Home(){
+    const [cycles, setCycles] = useState<Cycle[]>([]);
+    const [activeCycleId, setActiveCycleId] = useState<string|null>(null);
+    const [amountSecondsPast, setAmountSecondsPast] = useState(0)
     // register adiciona um input ao formlulário
     const { register, handleSubmit, watch, reset } = useForm<NewCycleFormDataProps>({
         resolver: zodResolver(newCycleFormValidationSchema),
@@ -34,9 +45,30 @@ export function Home(){
     });
 
     function handleCreateNewCycle(data:NewCycleFormDataProps){
-        console.log(data)
+        const id = String(new Date().getTime())
+        const newCycle : Cycle = {
+            id,
+            task: data.task,
+            minutesAmount: data.minutesAmount
+        }
+
+        setCycles((state) => [...state, newCycle])
+        setActiveCycleId(id)
         reset();
     }
+
+    const activeCycle = cycles.find(cycle => cycle.id === activeCycleId)
+
+    const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+    const currentSeconds = activeCycle ? totalSeconds - amountSecondsPast : 0;
+
+    const minutesAmount = Math.floor(currentSeconds / 60);
+    const secondsAmount = currentSeconds % 60; 
+    // Método que prenche uma string até uma tamanho específico com um caracther
+    const minutes = String(minutesAmount).padStart(2, "0");
+    const seconds = String(secondsAmount).padStart(2, "0")
+
+
 
     // Controlled Component
     const task = watch("task"); 
@@ -74,11 +106,11 @@ export function Home(){
             
 
                 <CountDownContainer>
-                    <span>0</span>
-                    <span>0</span>
+                    <span>{minutes[0]}</span>
+                    <span>{minutes[1]}</span>
                     <Separator>:</Separator>
-                    <span>0</span>
-                    <span>0</span>
+                    <span>{seconds[0]}</span>
+                    <span>{seconds[1]}</span>
                 </CountDownContainer>
 
                 <StartCountDownButton type="submit" disabled={isSubmitDisabled}>
