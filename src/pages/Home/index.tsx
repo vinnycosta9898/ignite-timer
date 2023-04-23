@@ -49,10 +49,17 @@ export function Home(){
     const activeCycle = cycles.find(cycle => cycle.id === activeCycleId)
 
     useEffect(() => {
+        let interval : number;
         if(activeCycle){
-            setInterval(() => {
-                setAmountSecondsPast(differenceInSeconds(new Date, activeCycle.startDate))
+            interval = setInterval(() => {
+                setAmountSecondsPast(
+                    differenceInSeconds(new Date, activeCycle.startDate)
+                )
             }, 1000)
+        }
+
+        return () => {
+            clearInterval(interval)
         }
     }, [activeCycle])
 
@@ -66,7 +73,8 @@ export function Home(){
         }
 
         setCycles((state) => [...state, newCycle])
-        setActiveCycleId(id)
+        setActiveCycleId(id);
+        setAmountSecondsPast(0);
         reset();
     }
 
@@ -79,7 +87,11 @@ export function Home(){
     const minutes = String(minutesAmount).padStart(2, "0");
     const seconds = String(secondsAmount).padStart(2, "0")
 
-
+    useEffect(() => {
+        if(activeCycle){
+            document.title = `${minutes}:${seconds}`
+        }
+    }, [minutes, seconds, activeCycle])
 
     // Controlled Component
     const task = watch("task"); 
