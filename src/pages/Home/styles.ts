@@ -33,7 +33,7 @@ const BaseInput = styled.input`
 
     background: transparent;
     border: 0;
-    border-bottom: 2px solid ${(props) => props.theme["gray-500"]}
+    border-bottom: 2px solid ${(props) => props.theme["gray-500"]};
     color: ${(props) => props.theme["gray-100"]};
     font-size: 1.125rem;
     font-weight: bold;
@@ -41,7 +41,7 @@ const BaseInput = styled.input`
 
     &:focus{
         box-shadow: none;
-        border-color: ${(props) => props.theme["green-500"]}
+        border-color: ${(props) => props.theme["green-500"]};
     }
 
     &::placeholder{
