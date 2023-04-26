@@ -3,7 +3,7 @@ import { CountDownContainer,
          Separator 
        } from "./styles";
 import { differenceInSeconds } from "date-fns";
-import { CyclesContext } from "../..";
+import { CyclesContext } from "../../../../Contexts/CyclesContext";
 
 export function CountDown(){
     const {activeCycle, activeCycleId, markCurrentCycleAsFinished, amountSecondsPast, setSecondsPassed } = useContext(CyclesContext);
